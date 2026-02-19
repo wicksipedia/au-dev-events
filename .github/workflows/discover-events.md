@@ -8,10 +8,20 @@ engine: copilot
 permissions:
   contents: read
   pull-requests: read
+network:
+  allowed:
+    - defaults
+    - "api.tavily.com"
+    - "tavily.com"
 tools:
-  playwright:
   edit:
   bash: ["ls", "cat"]
+mcp-servers:
+  tavily:
+    command: "npx"
+    args: ["-y", "tavily-mcp@latest"]
+    env:
+      TAVILY_API_KEY: "${{ secrets.TAVILY_API_KEY }}"
 safe-outputs:
   create-pull-request:
     title-prefix: "[events] "
@@ -30,7 +40,7 @@ Also read the template at `src/data/events/_template.md` to understand the exact
 
 ## Step 2: Search for new events
 
-Search the web for upcoming Australian developer events using these queries:
+Use the `tavily-search` tool to find upcoming Australian developer events. Run searches for each of these queries:
 - "Australian developer conference 2026"
 - "tech conference Australia 2026"
 - "software developer meetup Australia"
@@ -49,7 +59,9 @@ Focus on events that are:
 - Happening in the future (not past events)
 - Not already in the existing events list
 
-Also search for the latest details on **existing future events** (events whose `endDate` is still in the future). Check their official websites to see if any details have changed — dates, venue, cost, or workshop availability.
+For each promising event found, use `tavily-extract` on the event's official website to get detailed information (dates, venue, cost, etc.).
+
+Also search for the latest details on **existing future events** (events whose `endDate` is still in the future). Use `tavily-extract` on their official websites to check if any details have changed — dates, venue, cost, or workshop availability.
 
 ## Step 3: Update existing events
 
