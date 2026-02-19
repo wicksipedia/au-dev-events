@@ -1,0 +1,62 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+
+const navLinks = [
+	{ href: `${import.meta.env.BASE_URL}/`, label: "Events" },
+	{ href: `${import.meta.env.BASE_URL}/tags/`, label: "Tags" },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header
+	class="sticky top-0 z-40 border-b border-border/50 bg-background/82 backdrop-blur-lg backdrop-saturate-[1.8]"
+>
+	<nav class="app-layout flex h-14 items-center justify-between">
+		<!-- Logo -->
+		<a
+			href={import.meta.env.BASE_URL}
+			class="flex items-center gap-2 text-sm font-bold tracking-tight"
+		>
+			<span class="relative flex items-center gap-1">
+				AU Dev Events
+				<!-- Bouncing dot -->
+				<span class="relative inline-flex h-4 w-2 items-end">
+					<span
+						class="absolute bottom-0 h-2 w-2 rounded-full bg-accent"
+						style="animation: dot-squish 0.8s cubic-bezier(0.36, 0, 0.66, -0.56) infinite;"
+					></span>
+					<span
+						class="absolute -bottom-0.5 left-0.5 h-[2px] w-1 rounded-full bg-accent/40"
+						style="animation: dot-shadow-squish 0.8s cubic-bezier(0.36, 0, 0.66, -0.56) infinite;"
+					></span>
+				</span>
+			</span>
+		</a>
+
+		<!-- Nav links + theme toggle -->
+		<div class="flex items-center gap-1">
+			{
+				navLinks.map(({ href, label }) => {
+					const isActive = currentPath === href || currentPath === href.replace(/\/$/, "");
+					return (
+						<a
+							href={href}
+							class:list={[
+								"relative rounded-md px-3 py-1.5 text-[0.8rem] font-semibold uppercase tracking-[0.08em] transition-colors",
+								"hover:bg-accent/8 hover:text-accent",
+								isActive && "text-accent",
+							]}
+						>
+							{label}
+							{isActive && (
+								<span class="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-accent" />
+							)}
+						</a>
+					);
+				})
+			}
+			<ThemeToggle />
+		</div>
+	</nav>
+</header>

@@ -1,0 +1,119 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import EventMeta from "@/components/EventMeta.astro";
+import Badge from "@/components/Badge.astro";
+import Tag from "@/components/Tag.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import { formatDateRange } from "@/utils/formatDate";
+import { SITE } from "@/config";
+
+export async function getStaticPaths() {
+	const events = await getCollection("events");
+	return events.map((event) => ({
+		params: { slug: event.id },
+		props: { event },
+	}));
+}
+
+const { event } = Astro.props;
+const { name, location, startDate, endDate, cost, tags, hasWorkshops, url } =
+	event.data;
+const { Content } = await render(event);
+const isFree = cost.toLowerCase() === "free";
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "Event",
+	name,
+	startDate: startDate.toISOString(),
+	endDate: endDate.toISOString(),
+	location: {
+		"@type": "Place",
+		name: location.venue || `${location.city}, ${location.state}`,
+		address: {
+			"@type": "PostalAddress",
+			addressLocality: location.city,
+			addressRegion: location.state,
+			addressCountry: "AU",
+		},
+		...(location.latitude && location.longitude
+			? {
+					geo: {
+						"@type": "GeoCoordinates",
+						latitude: location.latitude,
+						longitude: location.longitude,
+					},
+				}
+			: {}),
+	},
+	url,
+	...(isFree ? { isAccessibleForFree: true } : {}),
+	offers: {
+		"@type": "Offer",
+		price: isFree ? "0" : cost,
+		priceCurrency: "AUD",
+		url,
+	},
+};
+---
+
+<Layout title={name} description={`${name} — ${formatDateRange(startDate, endDate)} in ${location.city}, ${location.state}`} jsonLd={jsonLd}>
+	<article class="py-12">
+		<div class="app-layout max-w-3xl">
+			<!-- Back link -->
+			<a
+				href={import.meta.env.BASE_URL}
+				class="mb-8 inline-flex items-center gap-1.5 text-xs text-foreground/60 transition-colors hover:text-accent"
+			>
+				<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="19" y1="12" x2="5" y2="12"></line>
+					<polyline points="12 19 5 12 12 5"></polyline>
+				</svg>
+				Back to events
+			</a>
+
+			<!-- Badges -->
+			{
+				(isFree || hasWorkshops) && (
+					<div class="mb-4 flex gap-2">
+						{isFree && <Badge variant="free" />}
+						{hasWorkshops && <Badge variant="workshops" />}
+					</div>
+				)
+			}
+
+			<!-- Title -->
+			<h1 class="animate-reveal text-2xl font-bold tracking-tight sm:text-3xl">
+				{name}
+			</h1>
+
+			<!-- Meta -->
+			<div class="animate-reveal-delay-1 mt-6 rounded-lg border border-border/40 bg-muted/20 p-4">
+				<EventMeta
+					startDate={startDate}
+					endDate={endDate}
+					city={location.city}
+					state={location.state}
+					venue={location.venue}
+					cost={cost}
+				/>
+			</div>
+
+			<!-- Tags -->
+			<div class="animate-reveal-delay-2 mt-4 flex flex-wrap gap-1.5">
+				{tags.map((tag) => <Tag tag={tag} size="md" />)}
+			</div>
+
+			<!-- Description -->
+			<div class="animate-reveal-delay-3 prose-sm mt-8 leading-relaxed text-foreground/80">
+				<Content />
+			</div>
+
+			<!-- CTA -->
+			<div class="mt-8">
+				<LinkButton href={url} label="Visit event website" external />
+			</div>
+		</div>
+	</article>
+</Layout>

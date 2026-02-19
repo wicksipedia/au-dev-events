@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* ── Design tokens ─────────────────────────────────────────── */
+
+:root,
+html[data-theme="light"] {
+	--background: #faf9f6;
+	--foreground: #1a1a1a;
+	--accent: #d4550a;
+	--accent-2: #16a34a;
+	--muted: #e8e5df;
+	--border: #d6d3cc;
+}
+
+html[data-theme="dark"] {
+	--background: #0f1117;
+	--foreground: #e8e6e3;
+	--accent: #ff7a1a;
+	--accent-2: #34d399;
+	--muted: #1e2130;
+	--border: #2a2d3a;
+}
+
+/* ── Tailwind theme mapping ────────────────────────────────── */
+
+@theme inline {
+	--font-mono: "Google Sans Code", ui-monospace, SFMono-Regular, Menlo,
+		Monaco, Consolas, monospace;
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-accent: var(--accent);
+	--color-accent-2: var(--accent-2);
+	--color-muted: var(--muted);
+	--color-border: var(--border);
+}
+
+/* ── Base styles ───────────────────────────────────────────── */
+
+html {
+	scrollbar-width: thin;
+	scrollbar-color: var(--accent) transparent;
+}
+
+body {
+	font-family: var(--font-mono);
+	background-color: var(--background);
+	color: var(--foreground);
+	min-height: 100dvh;
+}
+
+/* ── Selection ─────────────────────────────────────────────── */
+
+::selection {
+	background-color: oklch(from var(--accent) l c h / 0.9);
+	color: white;
+}
+
+/* ── Focus ─────────────────────────────────────────────────── */
+
+:focus-visible {
+	outline: 2px dashed var(--accent);
+	outline-offset: 2px;
+}
+
+/* ── Top accent bar ────────────────────────────────────────── */
+
+body::before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		var(--accent),
+		transparent
+	);
+	z-index: 100;
+}
+
+/* ── Animations ────────────────────────────────────────────── */
+
+@keyframes fade-in-up {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes dot-squish {
+	0% {
+		transform: translateY(0) scaleX(1) scaleY(1);
+	}
+	15% {
+		transform: translateY(-12px) scaleX(0.9) scaleY(1.1);
+	}
+	30% {
+		transform: translateY(0) scaleX(1.1) scaleY(0.85);
+	}
+	45% {
+		transform: translateY(-4px) scaleX(0.95) scaleY(1.05);
+	}
+	60% {
+		transform: translateY(0) scaleX(1.02) scaleY(0.98);
+	}
+	75% {
+		transform: translateY(-1px) scaleX(0.99) scaleY(1.01);
+	}
+	100% {
+		transform: translateY(0) scaleX(1) scaleY(1);
+	}
+}
+
+@keyframes dot-shadow-squish {
+	0% {
+		transform: scaleX(1);
+		opacity: 0.4;
+	}
+	15% {
+		transform: scaleX(0.7);
+		opacity: 0.2;
+	}
+	30% {
+		transform: scaleX(1.3);
+		opacity: 0.5;
+	}
+	45% {
+		transform: scaleX(0.9);
+		opacity: 0.35;
+	}
+	60% {
+		transform: scaleX(1.05);
+		opacity: 0.4;
+	}
+	100% {
+		transform: scaleX(1);
+		opacity: 0.4;
+	}
+}
+
+/* ── Utility classes ───────────────────────────────────────── */
+
+@utility animate-reveal {
+	animation: fade-in-up 0.5s ease both;
+}
+
+@utility animate-reveal-delay-1 {
+	animation: fade-in-up 0.5s ease 0.1s both;
+}
+
+@utility animate-reveal-delay-2 {
+	animation: fade-in-up 0.5s ease 0.2s both;
+}
+
+@utility animate-reveal-delay-3 {
+	animation: fade-in-up 0.5s ease 0.3s both;
+}
+
+@utility app-layout {
+	margin-inline: auto;
+	width: 100%;
+	max-width: 72rem;
+	padding-inline: 1rem;
+}
+
+@utility max-w-app {
+	max-width: 72rem;
+}

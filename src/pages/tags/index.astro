@@ -1,0 +1,43 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import { getUpcomingEvents } from "@/utils/getUpcomingEvents";
+import { getUniqueTags } from "@/utils/getUniqueTags";
+import { getEventsByTag } from "@/utils/getEventsByTag";
+
+const allEvents = await getCollection("events");
+const upcomingEvents = getUpcomingEvents(allEvents);
+const tags = getUniqueTags(upcomingEvents);
+---
+
+<Layout title="Tags" description="Browse Australian developer events by topic.">
+	<section class="py-12">
+		<div class="app-layout max-w-3xl">
+			<h1 class="animate-reveal text-2xl font-bold tracking-tight sm:text-3xl">
+				Tags
+			</h1>
+			<p class="animate-reveal-delay-1 mt-3 text-sm text-foreground/70">
+				Browse events by topic.
+			</p>
+
+			<div class="animate-reveal-delay-2 mt-8 flex flex-wrap gap-3">
+				{
+					tags.map((tag) => {
+						const count = getEventsByTag(upcomingEvents, tag).length;
+						return (
+							<a
+								href={`${import.meta.env.BASE_URL}/tags/${tag}/`}
+								class="inline-flex items-center gap-2 rounded-lg border border-border/40 bg-muted/20 px-4 py-2.5 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-accent/40 hover:bg-muted/40 hover:text-accent hover:shadow-md hover:shadow-accent/5"
+							>
+								<span>{tag}</span>
+								<span class="rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent">
+									{count}
+								</span>
+							</a>
+						);
+					})
+				}
+			</div>
+		</div>
+	</section>
+</Layout>

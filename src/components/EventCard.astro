@@ -1,0 +1,52 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Badge from "./Badge.astro";
+import EventMeta from "./EventMeta.astro";
+import Tag from "./Tag.astro";
+
+interface Props {
+	event: CollectionEntry<"events">;
+}
+
+const { event } = Astro.props;
+const { name, location, startDate, endDate, cost, tags, hasWorkshops, url } =
+	event.data;
+const isFree = cost.toLowerCase() === "free";
+---
+
+<article
+	class="group relative flex flex-col overflow-hidden rounded-xl border border-border/40 bg-muted/20 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-border/70 hover:bg-muted/40 hover:shadow-lg hover:shadow-accent/5"
+	data-tags={tags.join(",")}
+>
+	<!-- Badges -->
+	{
+		(isFree || hasWorkshops) && (
+			<div class="mb-3 flex gap-2">
+				{isFree && <Badge variant="free" />}
+				{hasWorkshops && <Badge variant="workshops" />}
+			</div>
+		)
+	}
+
+	<!-- Title -->
+	<h3 class="mb-3 text-base font-bold leading-snug transition-colors group-hover:text-accent">
+		<a href={`${import.meta.env.BASE_URL}/events/${event.id}/`} class="after:absolute after:inset-0">
+			{name}
+		</a>
+	</h3>
+
+	<!-- Meta -->
+	<EventMeta
+		startDate={startDate}
+		endDate={endDate}
+		city={location.city}
+		state={location.state}
+		venue={location.venue}
+		cost={cost}
+	/>
+
+	<!-- Tags -->
+	<div class="relative z-10 mt-4 flex flex-wrap gap-1.5">
+		{tags.map((tag) => <Tag tag={tag} />)}
+	</div>
+</article>

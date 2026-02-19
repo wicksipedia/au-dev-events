@@ -1,0 +1,18 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="Page not found">
+	<section class="flex flex-1 items-center justify-center py-24">
+		<div class="text-center">
+			<h1 class="text-6xl font-bold text-accent">404</h1>
+			<p class="mt-4 text-lg text-foreground/70">Page not found.</p>
+			<a
+				href={import.meta.env.BASE_URL}
+				class="mt-6 inline-flex items-center gap-2 rounded-lg border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition-colors hover:border-accent/60 hover:bg-accent/20"
+			>
+				Back to events
+			</a>
+		</div>
+	</section>
+</Layout>

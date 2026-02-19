@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import EventCard from "@/components/EventCard.astro";
+import EventFilters from "@/components/EventFilters.astro";
+import { getUpcomingEvents } from "@/utils/getUpcomingEvents";
+import { getUniqueTags } from "@/utils/getUniqueTags";
+import { SITE } from "@/config";
+
+const allEvents = await getCollection("events");
+const upcomingEvents = getUpcomingEvents(allEvents);
+const tags = getUniqueTags(upcomingEvents);
+---
+
+<Layout>
+	<!-- Hero -->
+	<section class="border-b border-border/50 py-16">
+		<div class="app-layout">
+			<h1 class="animate-reveal text-3xl font-bold tracking-tight sm:text-4xl">
+				Australian Dev Events
+			</h1>
+			<p class="animate-reveal-delay-1 mt-3 max-w-xl text-sm text-foreground/70">
+				{SITE.desc} Discover conferences, meetups, and workshops happening across Australia.
+			</p>
+		</div>
+	</section>
+
+	<!-- Events -->
+	<section class="py-12">
+		<div class="app-layout">
+			<div class="animate-reveal-delay-2">
+				<EventFilters tags={tags} />
+			</div>
+
+			{
+				upcomingEvents.length > 0 ? (
+					<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+						{upcomingEvents.map((event, i) => (
+							<div
+								class="animate-reveal"
+								style={`animation-delay: ${0.1 + i * 0.05}s`}
+							>
+								<EventCard event={event} />
+							</div>
+						))}
+					</div>
+				) : (
+					<div class="py-16 text-center text-foreground/50">
+						<p class="text-lg">No upcoming events found.</p>
+						<p class="mt-2 text-sm">Check back soon — new events are added regularly.</p>
+					</div>
+				)
+			}
+		</div>
+	</section>
+</Layout>

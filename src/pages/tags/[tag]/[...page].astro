@@ -1,0 +1,67 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import EventCard from "@/components/EventCard.astro";
+import { getUpcomingEvents } from "@/utils/getUpcomingEvents";
+import { getUniqueTags } from "@/utils/getUniqueTags";
+import { getEventsByTag } from "@/utils/getEventsByTag";
+
+export async function getStaticPaths() {
+	const allEvents = await getCollection("events");
+	const upcomingEvents = getUpcomingEvents(allEvents);
+	const tags = getUniqueTags(upcomingEvents);
+
+	return tags.map((tag) => ({
+		params: { tag, page: undefined },
+		props: {
+			tag,
+			events: getEventsByTag(upcomingEvents, tag),
+		},
+	}));
+}
+
+interface Props {
+	tag: string;
+	events: Awaited<ReturnType<typeof getCollection<"events">>>;
+}
+
+const { tag, events } = Astro.props;
+const sorted = events.sort(
+	(a, b) => a.data.startDate.getTime() - b.data.startDate.getTime(),
+);
+---
+
+<Layout title={`Events tagged "${tag}"`} description={`Australian developer events tagged "${tag}".`}>
+	<section class="py-12">
+		<div class="app-layout">
+			<!-- Back link -->
+			<a
+				href={`${import.meta.env.BASE_URL}/tags/`}
+				class="mb-6 inline-flex items-center gap-1.5 text-xs text-foreground/60 transition-colors hover:text-accent"
+			>
+				<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="19" y1="12" x2="5" y2="12"></line>
+					<polyline points="12 19 5 12 12 5"></polyline>
+				</svg>
+				All tags
+			</a>
+
+			<h1 class="animate-reveal text-2xl font-bold tracking-tight sm:text-3xl">
+				<span class="text-accent">#</span>{tag}
+			</h1>
+			<p class="animate-reveal-delay-1 mt-2 text-sm text-foreground/70">
+				{sorted.length} upcoming event{sorted.length !== 1 ? "s" : ""}
+			</p>
+
+			<div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				{
+					sorted.map((event, i) => (
+						<div class="animate-reveal" style={`animation-delay: ${0.1 + i * 0.05}s`}>
+							<EventCard event={event} />
+						</div>
+					))
+				}
+			</div>
+		</div>
+	</section>
+</Layout>

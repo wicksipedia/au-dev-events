@@ -1,0 +1,30 @@
+---
+import { SITE } from "@/config";
+---
+
+<footer class="border-t border-border/50 py-8">
+	<div class="app-layout flex flex-col items-center gap-2 text-center text-xs text-foreground/60">
+		<p>
+			&copy; {new Date().getFullYear()} {SITE.title}. Built with
+			<a
+				href="https://astro.build"
+				class="text-accent underline decoration-dashed underline-offset-4 hover:text-accent/80"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				Astro
+			</a>.
+		</p>
+		<p>
+			Events discovered by
+			<a
+				href="https://github.com/features/copilot"
+				class="text-accent underline decoration-dashed underline-offset-4 hover:text-accent/80"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				GitHub Agentic Workflows
+			</a> powered by Claude Code.
+		</p>
+	</div>
+</footer>

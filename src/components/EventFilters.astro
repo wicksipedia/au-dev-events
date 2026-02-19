@@ -1,0 +1,71 @@
+---
+interface Props {
+	tags: string[];
+	activeTag?: string;
+}
+
+const { tags, activeTag } = Astro.props;
+---
+
+<div class="mb-8 flex flex-wrap gap-2" id="event-filters">
+	<button
+		class:list={[
+			"filter-btn rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+			!activeTag
+				? "border-accent bg-accent/15 text-accent"
+				: "border-border/50 text-foreground/60 hover:border-accent/40 hover:text-accent",
+		]}
+		data-tag="all"
+	>
+		All
+	</button>
+	{
+		tags.map((tag) => (
+			<button
+				class:list={[
+					"filter-btn rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+					activeTag === tag
+						? "border-accent bg-accent/15 text-accent"
+						: "border-border/50 text-foreground/60 hover:border-accent/40 hover:text-accent",
+				]}
+				data-tag={tag}
+			>
+				{tag}
+			</button>
+		))
+	}
+</div>
+
+<script>
+	function initFilters() {
+		const filterBtns = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+		const cards = document.querySelectorAll<HTMLElement>("[data-tags]");
+
+		filterBtns.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const tag = btn.dataset.tag;
+
+				// Update active button
+				filterBtns.forEach((b) => {
+					b.classList.remove("border-accent", "bg-accent/15", "text-accent");
+					b.classList.add("border-border/50", "text-foreground/60");
+				});
+				btn.classList.remove("border-border/50", "text-foreground/60");
+				btn.classList.add("border-accent", "bg-accent/15", "text-accent");
+
+				// Filter cards
+				cards.forEach((card) => {
+					const cardTags = card.dataset.tags?.split(",") || [];
+					if (tag === "all" || cardTags.includes(tag!)) {
+						card.style.display = "";
+					} else {
+						card.style.display = "none";
+					}
+				});
+			});
+		});
+	}
+
+	initFilters();
+	document.addEventListener("astro:after-swap", initFilters);
+</script>
