@@ -2,15 +2,14 @@
 name: Discover Australian Developer Events
 description: Search for upcoming Australian software developer events and propose them via PR.
 on:
-  schedule:
-    - cron: "0 23 * * 0"
+  schedule: weekly on sunday
   workflow_dispatch:
-engine: claude
+engine: copilot
 permissions:
   contents: read
   pull-requests: read
 tools:
-  web-search:
+  playwright:
   edit:
   bash: ["ls", "cat"]
 safe-outputs:
