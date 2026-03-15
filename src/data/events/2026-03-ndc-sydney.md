@@ -6,8 +6,8 @@ location:
   venue: "Hilton Sydney"
   latitude: -33.8718
   longitude: 151.2080
-startDate: 2026-03-10T09:00:00+11:00
-endDate: 2026-03-12T17:00:00+11:00
+startDate: 2026-04-22T09:00:00+10:00
+endDate: 2026-04-24T17:00:00+10:00
 cost: "$1,299 - $2,499"
 tags: ["general", "cloud", "ai", "web", "devops", "dotnet"]
 hasWorkshops: true
